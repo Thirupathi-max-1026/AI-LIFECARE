@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI LifeCare Private</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+    --primary:#00a896;
+    --secondary:#00695c;
+    --bg:#eef6f5;
+    --card:#fff;
+    --text:#17202a;
+    --muted:#68777c;
+    --danger:#d32f2f;
+    --shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+body.dark{
+    --bg:#101817;
+    --card:#182321;
+    --text:#f4f7f7;
+    --muted:#aab8b5;
+    --shadow:0 8px 25px rgba(0,0,0,.3);
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+.hidden{display:none!important}
+
+#lockScreen{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(135deg,#004d40,#00a896);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    padding:20px;
+}
+
+.lockBox{
+    width:min(95%,400px);
+    background:white;
+    color:#17202a;
+    padding:30px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.lockIcon{font-size:60px}
+
+.lockBox input{
+    width:100%;
+    padding:13px;
+    margin:7px 0;
+    border:1px solid #ccd5d3;
+    border-radius:11px;
+    font-size:15px;
+}
+
+header{
+    background:linear-gradient(135deg,#00695c,#00a896);
+    color:white;
+    padding:20px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.headerInside{
+    max-width:1150px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.logo h1{margin:0;font-size:25px}
+.logo p{margin:5px 0 0;font-size:13px}
+
+.headerButtons{
+    display:flex;
+    gap:8px;
+}
+
+.container{
+    max-width:1150px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:20px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+}
+
+.card h2{margin-top:0}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:15px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border:1px solid #ccd5d3;
+    border-radius:11px;
+    background:var(--card);
+    color:var(--text);
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+button{
+    border:none;
+    padding:12px 18px;
+    border-radius:11px;
+    background:var(--primary);
+    color:white;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:bold;
+    margin:3px;
+}
+
+button:hover{
+    transform:translateY(-1px);
+    opacity:.9;
+}
+
+.secondary{background:#607d78}
+.danger{background:var(--danger)}
+
+.nav{
+    display:flex;
+    gap:8px;
+    overflow:auto;
+    margin-bottom:20px;
+}
+
+.nav button{white-space:nowrap}
+
+.metric{
+    background:var(--card);
+    border-radius:18px;
+    padding:18px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    border-top:4px solid var(--primary);
+}
+
+.metricIcon{font-size:32px}
+
+.metricName{
+    color:var(--muted);
+    margin:8px 0;
+}
+
+.metricValue{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.scoreBox{
+    text-align:center;
+    padding:25px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#e0f7f4,#e8f5e9);
+}
+
+body.dark .scoreBox{background:#203633}
+
+.score{
+    font-size:60px;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:12px;
+}
+
+.action{
+    padding:18px;
+    border-radius:16px;
+    background:#e0f2f1;
+    color:#00695c;
+    text-align:center;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+body.dark .action{
+    background:#203633;
+    color:#80cbc4;
+}
+
+.action span{
+    display:block;
+    font-size:30px;
+    margin-bottom:7px;
+}
+
+.ai{
+    border-left:6px solid var(--primary);
+    background:linear-gradient(135deg,#e8f5e9,#e0f7fa);
+}
+
+body.dark .ai{background:#1c302d}
+
+.aiText{line-height:1.7}
+
+.alert{
+    padding:15px;
+    border-radius:13px;
+    margin:8px 0;
+    background:#fff3cd;
+    color:#664d03;
+}
+
+.safe{
+    background:#e8f5e9;
+    color:#256029;
+    padding:15px;
+    border-radius:13px;
+}
+
+body.dark .safe{
+    background:#1c3823;
+    color:#a5d6a7;
+}
+
+hr{
+    border:0;
+    border-top:1px solid #ddd;
+    margin:20px 0;
+}
+
+.small{
+    color:var(--muted);
+    font-size:12px;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.userBadge{
+    background:rgba(255,255,255,.18);
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div id="lockScreen">
+
+<div class="lockBox">
+
+<div class="lockIcon">🩺</div>
+
+<h2>AI LifeCare Private</h2>
+
+<p>Personal Health Management System</p>
+
+<!-- LOGIN -->
+
+<div id="loginArea">
+
+<h3>🔐 Login</h3>
+
+<input
+id="loginUsername"
+type="text"
+placeholder="Username">
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Password">
+
+<br>
+
+<button onclick="loginUser()">
+🔓 Login
+</button>
+
+<p id="loginMessage"></p>
+
+<hr>
+
+<p>New user?</p>
+
+<button
+class="secondary"
+onclick="showRegister()">
+👤 Create Account
+</button>
+
+</div>
+
+
+<!-- REGISTER -->
+
+<div id="registerArea" class="hidden">
+
+<h3>👤 Create New Account</h3>
+
+<input
+id="registerName"
+type="text"
+placeholder="Full Name">
+
+<input
+id="registerUsername"
+type="text"
+placeholder="Create Username">
+
+<input
+id="registerPassword"
+type="password"
+placeholder="Create Password">
+
+<input
+id="registerPassword2"
+type="password"
+placeholder="Confirm Password">
+
+<br>
+
+<button onclick="registerUser()">
+✅ Create Account
+</button>
+
+<p id="registerMessage"></p>
+
+<button
+class="secondary"
+onclick="showLogin()">
+🔙 Back to Login
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+<div class="headerInside">
+
+<div class="logo">
+
+<h1>🩺 AI LifeCare</h1>
+
+<p>Private Personal Health Assistant</p>
+
+</div>
+
+<div>
+
+<span class="userBadge" id="headerUser">
+Guest
+</span>
+
+<button onclick="toggleDarkMode()">🌙</button>
+
+<button onclick="logoutUser()">🚪</button>
+
+</div>
+
+</div>
+
+</header>
+
+
+<!-- ================= APP ================= -->
+
+<main class="container">
+
+<div class="nav">
+
+<button onclick="showSection('dashboard')">
+🏠 Dashboard
+</button>
+
+<button onclick="showSection('profile')">
+👤 Profile
+</button>
+
+<button onclick="showSection('daily')">
+📝 Daily
+</button>
+
+<button onclick="showSection('reproductive')">
+🩸 Reproductive
+</button>
+
+<button onclick="showSection('lifestyle')">
+🍎 Lifestyle
+</button>
+
+<button onclick="showSection('ai')">
+🤖 AI
+</button>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard">
+
+<div class="card">
+
+<h2>
+Good day 👋
+<span id="userGreeting">User</span>
+</h2>
+
+<p>
+Welcome to your private health dashboard.
+</p>
+
+</div>
+
+
+<div class="grid">
+
+<div class="metric">
+<div class="metricIcon">❤️</div>
+<div class="metricName">Heart Rate</div>
+<div class="metricValue">
+<span id="dHeart">--</span> BPM
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">🩸</div>
+<div class="metricName">Blood Pressure</div>
+<div class="metricValue">
+<span id="dBP">--</span>
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">🌡️</div>
+<div class="metricName">Temperature</div>
+<div class="metricValue">
+<span id="dTemp">--</span> °C
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">🫁</div>
+<div class="metricName">SpO₂</div>
+<div class="metricValue">
+<span id="dSpo2">--</span> %
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">💧</div>
+<div class="metricName">Water</div>
+<div class="metricValue">
+<span id="dWater">0</span> L
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">😴</div>
+<div class="metricName">Sleep</div>
+<div class="metricValue">
+<span id="dSleep">0</span> h
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">🏃</div>
+<div class="metricName">Steps</div>
+<div class="metricValue">
+<span id="dSteps">0</span>
+</div>
+</div>
+
+<div class="metric">
+<div class="metricIcon">⚖️</div>
+<div class="metricName">Weight</div>
+<div class="metricValue">
+<span id="dWeight">--</span> kg
+</div>
+</div>
+
+</div>
+
+<br>
+
+<div class="card scoreBox">
+
+<h2>❤️ Daily Health Score</h2>
+
+<div class="score" id="healthScore">
+--%
+</div>
+
+<p id="scoreText">
+Enter your daily health information.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- ================= PROFILE ================= -->
+
+<section id="profile" class="hidden">
+
+<div class="card">
+
+<h2>👤 Personal Profile</h2>
+
+<div class="grid">
+
+<div>
+<label>Full Name</label>
+<input id="name">
+</div>
+
+<div>
+<label>Age</label>
+<input id="age" type="number">
+</div>
+
+<div>
+<label>Gender</label>
+
+<select id="gender">
+<option value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+
+</div>
+
+<div>
+<label>Height (cm)</label>
+<input id="height" type="number">
+</div>
+
+<div>
+<label>Weight (kg)</label>
+<input id="weight" type="number">
+</div>
+
+<div>
+<label>Blood Group</label>
+
+<select id="blood">
+<option>A+</option>
+<option>A-</option>
+<option>B+</option>
+<option>B-</option>
+<option>O+</option>
+<option>O-</option>
+<option>AB+</option>
+<option>AB-</option>
+</select>
+
+</div>
+
+<div>
+<label>Emergency Contact</label>
+<input id="emergencyContact">
+</div>
+
+<div>
+<label>Allergies</label>
+<input id="allergies" placeholder="Example: None">
+</div>
+
+<div>
+<label>Existing Conditions</label>
+<input id="conditions" placeholder="Example: None">
+</div>
+
+</div>
+
+<br>
+
+<label>Current Medicines</label>
+
+<textarea id="medicines"></textarea>
+
+<br>
+
+<button onclick="saveProfile()">
+💾 Save Profile
+</button>
+
+<p id="profileMessage"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>⚖️ BMI</h2>
+
+<p id="bmiResult">
+Enter height and weight.
+</p>
+
+<button onclick="calculateBMI()">
+Calculate BMI
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ================= DAILY ================= -->
+
+<section id="daily" class="hidden">
+
+<div class="card">
+
+<h2>📝 Daily Health Check-in</h2>
+
+<div class="grid">
+
+<div>
+<label>Heart Rate (BPM)</label>
+<input id="heartInput" type="number">
+</div>
+
+<div>
+<label>Temperature (°C)</label>
+<input id="tempInput" type="number" step="0.1">
+</div>
+
+<div>
+<label>Blood Pressure</label>
+<input id="bpInput" placeholder="120/80">
+</div>
+
+<div>
+<label>SpO₂ (%)</label>
+<input id="spo2Input" type="number">
+</div>
+
+<div>
+<label>Water (Litres)</label>
+<input id="waterInput" type="number" step="0.1">
+</div>
+
+<div>
+<label>Sleep (Hours)</label>
+<input id="sleepInput" type="number" step="0.1">
+</div>
+
+<div>
+<label>Steps</label>
+<input id="stepsInput" type="number">
+</div>
+
+<div>
+<label>Calories</label>
+<input id="caloriesInput" type="number">
+</div>
+
+</div>
+
+<br>
+
+<button onclick="updateHealth()">
+✅ Save Today's Health
+</button>
+
+<p id="dailyMessage"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>⚠️ Health Alerts</h2>
+
+<div id="alerts">
+
+<div class="safe">
+No automatic alerts yet.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= REPRODUCTIVE ================= -->
+
+<section id="reproductive" class="hidden">
+
+<div class="card">
+
+<h2>🩸 Menstrual Health</h2>
+
+<div class="grid">
+
+<div>
+<label>Last Period</label>
+<input id="periodDate" type="date">
+</div>
+
+<div>
+<label>Cycle Length</label>
+<input id="cycle" type="number" value="28">
+</div>
+
+</div>
+
+<br>
+
+<button onclick="calculatePeriod()">
+🩸 Estimate Next Period
+</button>
+
+<p id="periodResult"></p>
+
+<p class="small">
+Predictions are estimates only and are not medical diagnosis.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>🤰 Pregnancy Tracker</h2>
+
+<div class="grid">
+
+<div>
+
+<label>Pregnancy Status</label>
+
+<select id="pregnancyStatus">
+
+<option>Not pregnant</option>
+<option>Pregnant</option>
+<option>Trying to conceive</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>Pregnancy Start Date</label>
+<input id="pregnancyDate" type="date">
+
+</div>
+
+</div>
+
+<br>
+
+<button onclick="pregnancyInfo()">
+🤰 Check Progress
+</button>
+
+<p id="pregnancyResult"></p>
+
+</div>
+
+</section>
+
+
+<!-- ================= LIFESTYLE ================= -->
+
+<section id="lifestyle" class="hidden">
+
+<div class="card">
+
+<h2>🍎 Lifestyle Manager</h2>
+
+<div class="actions">
+
+<div class="action" onclick="addWater()">
+<span>💧</span>
+Add 250ml Water
+</div>
+
+<div class="action" onclick="addSteps()">
+<span>🏃</span>
+Add 500 Steps
+</div>
+
+<div class="action" onclick="addSleep()">
+<span>😴</span>
+Add 30min Sleep
+</div>
+
+<div class="action" onclick="recordAlcohol()">
+<span>🍺</span>
+Alcohol
+</div>
+
+<div class="action" onclick="recordSmoking()">
+<span>🚭</span>
+Smoking
+</div>
+
+<div class="action" onclick="recordExercise()">
+<span>🏋️</span>
+Exercise
+</div>
+
+</div>
+
+<p id="lifestyleMessage"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>🧠 Mental Wellness</h2>
+
+<label>Today's Mood</label>
+
+<select id="mood">
+<option>😊 Happy</option>
+<option>🙂 Good</option>
+<option>😐 Normal</option>
+<option>😟 Stressed</option>
+<option>😢 Sad</option>
+</select>
+
+<br><br>
+
+<label>Stress Level</label>
+
+<select id="stress">
+<option>Low</option>
+<option>Medium</option>
+<option>High</option>
+</select>
+
+<br><br>
+
+<button onclick="saveMood()">
+🧠 Save Wellness
+</button>
+
+<p id="moodMessage"></p>
+
+</div>
+
+</section>
+
+
+<!-- ================= AI ================= -->
+
+<section id="ai" class="hidden">
+
+<div class="card ai">
+
+<h2>🤖 AI Health Assistant</h2>
+
+<p class="aiText" id="aiMessage">
+Enter your health information and click Analyze.
+</p>
+
+<button onclick="runAI()">
+🤖 Analyze My Health
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h2>💡 Health Suggestions</h2>
+
+<ul id="suggestions">
+
+<li>Stay hydrated.</li>
+<li>Maintain regular sleep.</li>
+<li>Move regularly.</li>
+<li>Keep health records updated.</li>
+
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- ================= MEDICINE ================= -->
+
+<div class="card">
+
+<h2>💊 Medicine Reminder</h2>
+
+<div class="grid">
+
+<div>
+<label>Medicine Name</label>
+<input id="medicineName">
+</div>
+
+<div>
+<label>Time</label>
+<input id="medicineTime" type="time">
+</div>
+
+</div>
+
+<br>
+
+<button onclick="setMedicineReminder()">
+⏰ Set Reminder
+</button>
+
+<p id="medicineMessage"></p>
+
+</div>
+
+
+<!-- ================= EMERGENCY ================= -->
+
+<div class="card">
+
+<h2>🚨 Emergency</h2>
+
+<p>
+For serious or life-threatening symptoms, contact local emergency medical services or a qualified healthcare professional immediately.
+</p>
+
+<button class="danger" onclick="emergencyHelp()">
+🚨 Emergency Help
+</button>
+
+</div>
+
+
+<!-- ================= ACCOUNT ================= -->
+
+<div class="card">
+
+<h2>🔐 Account</h2>
+
+<button onclick="logoutUser()">
+🚪 Logout
+</button>
+
+<button class="danger" onclick="deleteAccount()">
+🗑️ Delete My Account
+</button>
+
+</div>
+
+
+</main>
+
+
+<footer>
+
+🩺 AI LifeCare Private
+
+<br><br>
+
+General health-management prototype — not a medical diagnosis system.
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   USER SYSTEM
+===================================================== */
+
+let currentUser=null;
+
+
+function getUsers(){
+
+    return JSON.parse(
+        localStorage.getItem("lifeCareUsers") || "{}"
+    );
+
+}
+
+
+function saveUsers(users){
+
+    localStorage.setItem(
+        "lifeCareUsers",
+        JSON.stringify(users)
+    );
+
+}
+
+
+function getCurrentUser(){
+
+    if(!currentUser) return null;
+
+    const users=getUsers();
+
+    return users[currentUser] || null;
+
+}
+
+
+function saveCurrentUser(user){
+
+    if(!currentUser) return;
+
+    const users=getUsers();
+
+    users[currentUser]=user;
+
+    saveUsers(users);
+
+}
+
+
+/* =====================================================
+   REGISTER
+===================================================== */
+
+function showRegister(){
+
+    document
+    .getElementById("loginArea")
+    .classList.add("hidden");
+
+    document
+    .getElementById("registerArea")
+    .classList.remove("hidden");
+
+}
+
+
+function showLogin(){
+
+    document
+    .getElementById("registerArea")
+    .classList.add("hidden");
+
+    document
+    .getElementById("loginArea")
+    .classList.remove("hidden");
+
+}
+
+
+function registerUser(){
+
+    const name=
+        document.getElementById("registerName")
+        .value.trim();
+
+    const username=
+        document.getElementById("registerUsername")
+        .value.trim().toLowerCase();
+
+    const password=
+        document.getElementById("registerPassword")
+        .value;
+
+    const password2=
+        document.getElementById("registerPassword2")
+        .value;
+
+
+    if(!name || !username || !password){
+
+        document.getElementById("registerMessage")
+        .innerText=
+        "⚠️ Please fill all fields.";
+
+        return;
+    }
+
+
+    if(username.length<3){
+
+        document.getElementById("registerMessage")
+        .innerText=
+        "⚠️ Username must contain at least 3 characters.";
+
+        return;
+    }
+
+
+    if(password.length<4){
+
+        document.getElementById("registerMessage")
+        .innerText=
+        "⚠️ Password must contain at least 4 characters.";
+
+        return;
+    }
+
+
+    if(password!==password2){
+
+        document.getElementById("registerMessage")
+        .innerText=
+        "❌ Passwords do not match.";
+
+        return;
+    }
+
+
+    const users=getUsers();
+
+
+    if(users[username]){
+
+        document.getElementById("registerMessage")
+        .innerText=
+        "❌ Username already exists.";
+
+        return;
+    }
+
+
+    users[username]={
+
+        name:name,
+
+        password:password,
+
+        health:{
+            age:"",
+            gender:"",
+            height:"",
+            weight:"",
+            blood:"A+",
+            emergencyContact:"",
+            allergies:"",
+            conditions:"",
+            medicines:"",
+
+            heart:"",
+            temp:"",
+            bp:"",
+            spo2:"",
+            water:"0",
+            sleep:"0",
+            steps:"0",
+            calories:""
+        }
+
+    };
+
+
+    saveUsers(users);
+
+
+    document.getElementById("registerMessage")
+    .innerText=
+    "✅ Account created successfully!";
+
+
+    setTimeout(()=>{
+
+        document.getElementById("registerName").value="";
+        document.getElementById("registerUsername").value="";
+        document.getElementById("registerPassword").value="";
+        document.getElementById("registerPassword2").value="";
+
+        showLogin();
+
+    },1000);
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function loginUser(){
+
+    const username=
+        document.getElementById("loginUsername")
+        .value.trim().toLowerCase();
+
+    const password=
+        document.getElementById("loginPassword")
+        .value;
+
+
+    const users=getUsers();
+
+
+    if(!users[username]){
+
+        document.getElementById("loginMessage")
+        .innerText=
+        "❌ User not found.";
+
+        return;
+    }
+
+
+    if(users[username].password!==password){
+
+        document.getElementById("loginMessage")
+        .innerText=
+        "❌ Incorrect password.";
+
+        return;
+    }
+
+
+    currentUser=username;
+
+
+    localStorage.setItem(
+        "lifeCareCurrentUser",
+        username
+    );
+
+
+    document.getElementById("lockScreen")
+    .style.display="none";
+
+
+    document.getElementById("loginMessage")
+    .innerText="";
+
+
+    loadAllData();
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logoutUser(){
+
+    currentUser=null;
+
+    localStorage.removeItem(
+        "lifeCareCurrentUser"
+    );
+
+
+    document.getElementById("lockScreen")
+    .style.display="flex";
+
+
+    document.getElementById("loginUsername").value="";
+    document.getElementById("loginPassword").value="";
+
+    showLogin();
+
+}
+
+
+/* =====================================================
+   DELETE ACCOUNT
+===================================================== */
+
+function deleteAccount(){
+
+    if(!currentUser) return;
+
+
+    if(!confirm(
+        "Delete your account and all your health data?"
+    )) return;
+
+
+    const users=getUsers();
+
+    delete users[currentUser];
+
+    saveUsers(users);
+
+
+    currentUser=null;
+
+    localStorage.removeItem(
+        "lifeCareCurrentUser"
+    );
+
+
+    alert("Account deleted successfully.");
+
+    location.reload();
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function showSection(id){
+
+    const sections=[
+        "dashboard",
+        "profile",
+        "daily",
+        "reproductive",
+        "lifestyle",
+        "ai"
+    ];
+
+
+    sections.forEach(section=>{
+
+        document
+        .getElementById(section)
+        .classList.add("hidden");
+
+    });
+
+
+    document
+    .getElementById(id)
+    .classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDarkMode(){
+
+    document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function saveProfile(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    user.name=
+        document.getElementById("name").value;
+
+
+    user.health.age=
+        document.getElementById("age").value;
+
+    user.health.gender=
+        document.getElementById("gender").value;
+
+    user.health.height=
+        document.getElementById("height").value;
+
+    user.health.weight=
+        document.getElementById("weight").value;
+
+    user.health.blood=
+        document.getElementById("blood").value;
+
+    user.health.emergencyContact=
+        document.getElementById("emergencyContact").value;
+
+    user.health.allergies=
+        document.getElementById("allergies").value;
+
+    user.health.conditions=
+        document.getElementById("conditions").value;
+
+    user.health.medicines=
+        document.getElementById("medicines").value;
+
+
+    saveCurrentUser(user);
+
+
+    document.getElementById("userGreeting")
+    .innerText=user.name || "User";
+
+
+    document.getElementById("headerUser")
+    .innerText="@"+currentUser;
+
+
+    document.getElementById("dWeight")
+    .innerText=user.health.weight || "--";
+
+
+    document.getElementById("profileMessage")
+    .innerText=
+    "✅ Profile saved successfully.";
+
+}
+
+
+/* =====================================================
+   BMI
+===================================================== */
+
+function calculateBMI(){
+
+    const height=
+        Number(document.getElementById("height").value)/100;
+
+    const weight=
+        Number(document.getElementById("weight").value);
+
+
+    if(!height || !weight){
+
+        document.getElementById("bmiResult")
+        .innerText=
+        "Enter height and weight.";
+
+        return;
+    }
+
+
+    const bmi=
+        weight/(height*height);
+
+
+    let status="";
+
+
+    if(bmi<18.5)
+        status="Underweight";
+
+    else if(bmi<25)
+        status="Normal range";
+
+    else if(bmi<30)
+        status="Overweight";
+
+    else
+        status="Obesity range";
+
+
+    document.getElementById("bmiResult")
+    .innerText=
+    `BMI: ${bmi.toFixed(1)} — ${status}`;
+
+}
+
+
+/* =====================================================
+   DAILY HEALTH
+===================================================== */
+
+function updateHealth(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    user.health.heart=
+        document.getElementById("heartInput").value;
+
+    user.health.temp=
+        document.getElementById("tempInput").value;
+
+    user.health.bp=
+        document.getElementById("bpInput").value;
+
+    user.health.spo2=
+        document.getElementById("spo2Input").value;
+
+    user.health.water=
+        document.getElementById("waterInput").value;
+
+    user.health.sleep=
+        document.getElementById("sleepInput").value;
+
+    user.health.steps=
+        document.getElementById("stepsInput").value;
+
+    user.health.calories=
+        document.getElementById("caloriesInput").value;
+
+
+    saveCurrentUser(user);
+
+
+    updateDashboard();
+
+    checkAlerts();
+
+
+    document.getElementById("dailyMessage")
+    .innerText=
+    "✅ Today's health data saved.";
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const h=user.health;
+
+
+    document.getElementById("dHeart")
+    .innerText=h.heart || "--";
+
+    document.getElementById("dBP")
+    .innerText=h.bp || "--";
+
+    document.getElementById("dTemp")
+    .innerText=h.temp || "--";
+
+    document.getElementById("dSpo2")
+    .innerText=h.spo2 || "--";
+
+    document.getElementById("dWater")
+    .innerText=h.water || "0";
+
+    document.getElementById("dSleep")
+    .innerText=h.sleep || "0";
+
+    document.getElementById("dSteps")
+    .innerText=h.steps || "0";
+
+    document.getElementById("dWeight")
+    .innerText=h.weight || "--";
+
+
+    calculateHealthScore();
+
+}
+
+
+/* =====================================================
+   ALERTS
+===================================================== */
+
+function checkAlerts(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const heart=
+        Number(user.health.heart);
+
+    const temp=
+        Number(user.health.temp);
+
+    const spo2=
+        Number(user.health.spo2);
+
+
+    let alerts=[];
+
+
+    if(heart>120){
+
+        alerts.push(
+        "❤️ Recorded heart rate is high. If this persists or you feel unwell, seek medical advice."
+        );
+
+    }
+
+
+    if(temp>=38){
+
+        alerts.push(
+        "🌡️ Recorded temperature is elevated. Monitor it and seek medical advice when appropriate."
+        );
+
+    }
+
+
+    if(spo2>0 && spo2<92){
+
+        alerts.push(
+        "🫁 Recorded SpO₂ is low. Seek urgent medical attention, especially if you have breathing difficulty."
+        );
+
+    }
+
+
+    if(alerts.length===0){
+
+        document.getElementById("alerts")
+        .innerHTML=
+        `<div class="safe">
+        ✅ No automatic alerts based on recorded values.
+        </div>`;
+
+    }else{
+
+        document.getElementById("alerts")
+        .innerHTML=
+        alerts.map(
+            x=>`<div class="alert">⚠️ ${x}</div>`
+        ).join("");
+
+    }
+
+}
+
+
+/* =====================================================
+   HEALTH SCORE
+===================================================== */
+
+function calculateHealthScore(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    let score=100;
+
+
+    const water=
+        Number(user.health.water);
+
+    const sleep=
+        Number(user.health.sleep);
+
+    const steps=
+        Number(user.health.steps);
+
+    const temp=
+        Number(user.health.temp);
+
+
+    if(water>0 && water<1.5)
+        score-=15;
+
+
+    if(sleep>0 && sleep<7)
+        score-=15;
+
+
+    if(steps>0 && steps<5000)
+        score-=10;
+
+
+    if(temp>=38)
+        score-=20;
+
+
+    score=Math.max(score,0);
+
+
+    document.getElementById("healthScore")
+    .innerText=score+"%";
+
+
+    document.getElementById("scoreText")
+    .innerText=
+        score>=80
+        ? "Good health-management score based on entered data."
+        : "Some recorded areas may need attention.";
+
+}
+
+
+/* =====================================================
+   WATER
+===================================================== */
+
+function addWater(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    let value=
+        Number(user.health.water||0);
+
+
+    value+=0.25;
+
+
+    user.health.water=
+        value.toFixed(2);
+
+
+    saveCurrentUser(user);
+
+    updateDashboard();
+
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "💧 250 ml water added.";
+
+}
+
+
+/* =====================================================
+   STEPS
+===================================================== */
+
+function addSteps(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    let value=
+        Number(user.health.steps||0);
+
+
+    value+=500;
+
+
+    user.health.steps=value;
+
+
+    saveCurrentUser(user);
+
+    updateDashboard();
+
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "🏃 500 steps added.";
+
+}
+
+
+/* =====================================================
+   SLEEP
+===================================================== */
+
+function addSleep(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    let value=
+        Number(user.health.sleep||0);
+
+
+    value+=0.5;
+
+
+    user.health.sleep=
+        value.toFixed(1);
+
+
+    saveCurrentUser(user);
+
+    updateDashboard();
+
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "😴 30 minutes sleep added.";
+
+}
+
+
+/* =====================================================
+   LIFESTYLE
+===================================================== */
+
+function recordAlcohol(){
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "🍺 Alcohol record saved.";
+
+}
+
+
+function recordSmoking(){
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "🚭 Smoking record saved.";
+
+}
+
+
+function recordExercise(){
+
+    document.getElementById("lifestyleMessage")
+    .innerText=
+    "🏋️ Exercise recorded.";
+
+}
+
+
+/* =====================================================
+   PERIOD
+===================================================== */
+
+function calculatePeriod(){
+
+    const dateValue=
+        document.getElementById("periodDate").value;
+
+    const cycle=
+        Number(document.getElementById("cycle").value);
+
+
+    if(!dateValue){
+
+        document.getElementById("periodResult")
+        .innerText=
+        "Please select your last period date.";
+
+        return;
+    }
+
+
+    const date=new Date(dateValue);
+
+    date.setDate(
+        date.getDate()+cycle
+    );
+
+
+    document.getElementById("periodResult")
+    .innerText=
+    "🩸 Estimated next period: "+
+    date.toDateString();
+
+}
+
+
+/* =====================================================
+   PREGNANCY
+===================================================== */
+
+function pregnancyInfo(){
+
+    const status=
+        document.getElementById("pregnancyStatus").value;
+
+    const dateValue=
+        document.getElementById("pregnancyDate").value;
+
+
+    if(status!=="Pregnant"){
+
+        document.getElementById("pregnancyResult")
+        .innerText=
+        "Pregnancy tracking is currently disabled.";
+
+        return;
+    }
+
+
+    if(!dateValue){
+
+        document.getElementById("pregnancyResult")
+        .innerText=
+        "Enter pregnancy start date.";
+
+        return;
+    }
+
+
+    const start=new Date(dateValue);
+
+    const today=new Date();
+
+
+    const days=
+        Math.floor(
+            (today-start)/(1000*60*60*24)
+        );
+
+
+    const weeks=
+        Math.max(
+            0,
+            Math.floor(days/7)
+        );
+
+
+    document.getElementById("pregnancyResult")
+    .innerText=
+    `🤰 Approximately ${weeks} weeks recorded. Please confirm dates with a qualified healthcare professional.`;
+
+}
+
+
+/* =====================================================
+   AI
+===================================================== */
+
+function runAI(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const h=user.health;
+
+
+    const heart=Number(h.heart);
+
+    const temp=Number(h.temp);
+
+    const water=Number(h.water);
+
+    const sleep=Number(h.sleep);
+
+    const steps=Number(h.steps);
+
+    const spo2=Number(h.spo2);
+
+
+    let advice=[];
+
+
+    if(water>0 && water<1.5)
+        advice.push(
+        "💧 Your recorded water intake is relatively low today."
+        );
+
+
+    if(sleep>0 && sleep<7)
+        advice.push(
+        "😴 Your recorded sleep is below 7 hours."
+        );
+
+
+    if(steps>0 && steps<5000)
+        advice.push(
+        "🏃 Your recorded activity level is relatively low."
+        );
+
+
+    if(heart>120)
+        advice.push(
+        "❤️ Your recorded heart rate is high. If it remains high or you feel unwell, seek medical advice."
+        );
+
+
+    if(temp>=38)
+        advice.push(
+        "🌡️ Your recorded temperature is elevated. Monitor it and consider medical advice."
+        );
+
+
+    if(spo2>0 && spo2<92)
+        advice.push(
+        "🫁 Your recorded SpO₂ is low. If you have breathing difficulty or concerning symptoms, seek urgent medical care."
+        );
+
+
+    if(advice.length===0){
+
+        advice.push(
+        "✅ No obvious concern was identified from the values entered."
+        );
+
+    }
+
+
+    document.getElementById("aiMessage")
+    .innerHTML=
+    advice.join("<br><br>")+
+    `<br><br>
+    <small>
+    ⚠️ General health-management guidance only, not a medical diagnosis.
+    </small>`;
+
+}
+
+
+/* =====================================================
+   MOOD
+===================================================== */
+
+function saveMood(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    user.mood=
+        document.getElementById("mood").value;
+
+    user.stress=
+        document.getElementById("stress").value;
+
+
+    saveCurrentUser(user);
+
+
+    document.getElementById("moodMessage")
+    .innerText=
+    "🧠 Wellness information saved.";
+
+}
+
+
+/* =====================================================
+   MEDICINE
+===================================================== */
+
+function setMedicineReminder(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const medicine=
+        document.getElementById("medicineName").value;
+
+    const time=
+        document.getElementById("medicineTime").value;
+
+
+    if(!medicine || !time){
+
+        alert(
+        "Enter medicine name and time."
+        );
+
+        return;
+    }
+
+
+    user.medicineName=medicine;
+
+    user.medicineTime=time;
+
+
+    saveCurrentUser(user);
+
+
+    document.getElementById("medicineMessage")
+    .innerText=
+    `⏰ Reminder saved for ${medicine} at ${time}.`;
+
+}
+
+
+/* =====================================================
+   EMERGENCY
+===================================================== */
+
+function emergencyHelp(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const contact=
+        user.health.emergencyContact;
+
+
+    if(contact){
+
+        if(confirm(
+        "Call your saved emergency contact?"
+        )){
+
+            window.location.href=
+                "tel:"+contact;
+
+        }
+
+    }else{
+
+        alert(
+        "No emergency contact is saved. Contact your local emergency medical service immediately if this is a serious emergency."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD USER DATA
+===================================================== */
+
+function loadAllData(){
+
+    const user=getCurrentUser();
+
+    if(!user) return;
+
+
+    const h=user.health;
+
+
+    document.getElementById("name").value=
+        user.name || "";
+
+    document.getElementById("age").value=
+        h.age || "";
+
+    document.getElementById("gender").value=
+        h.gender || "";
+
+    document.getElementById("height").value=
+        h.height || "";
+
+    document.getElementById("weight").value=
+        h.weight || "";
+
+    document.getElementById("blood").value=
+        h.blood || "A+";
+
+    document.getElementById("emergencyContact").value=
+        h.emergencyContact || "";
+
+    document.getElementById("allergies").value=
+        h.allergies || "";
+
+    document.getElementById("conditions").value=
+        h.conditions || "";
+
+    document.getElementById("medicines").value=
+        h.medicines || "";
+
+
+    document.getElementById("heartInput").value=
+        h.heart || "";
+
+    document.getElementById("tempInput").value=
+        h.temp || "";
+
+    document.getElementById("bpInput").value=
+        h.bp || "";
+
+    document.getElementById("spo2Input").value=
+        h.spo2 || "";
+
+    document.getElementById("waterInput").value=
+        h.water || "0";
+
+    document.getElementById("sleepInput").value=
+        h.sleep || "0";
+
+    document.getElementById("stepsInput").value=
+        h.steps || "0";
+
+    document.getElementById("caloriesInput").value=
+        h.calories || "";
+
+
+    document.getElementById("userGreeting")
+    .innerText=user.name || "User";
+
+
+    document.getElementById("headerUser")
+    .innerText="@"+currentUser;
+
+
+    updateDashboard();
+
+    checkAlerts();
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+window.onload=function(){
+
+    if(
+        localStorage.getItem("darkMode")==="true"
+    ){
+
+        document.body.classList.add("dark");
+
+    }
+
+
+    const savedUser=
+        localStorage.getItem(
+            "lifeCareCurrentUser"
+        );
+
+
+    if(savedUser){
+
+        const users=getUsers();
+
+
+        if(users[savedUser]){
+
+            currentUser=savedUser;
+
+            document.getElementById("lockScreen")
+            .style.display="none";
+
+            loadAllData();
+
+        }else{
+
+            localStorage.removeItem(
+                "lifeCareCurrentUser"
+            );
+
+            showLogin();
+
+        }
+
+    }else{
+
+        showLogin();
+
+    }
+
+};
+</script>
+
+</body>
+</html>
